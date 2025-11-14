@@ -21,12 +21,16 @@ class Player():
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
 
-    def player_movement(self):
+    def player_movement(self, resolution):
         keys = pygame.key.get_pressed()
+        if self.player_y > resolution[1] // 2:
+            self.player_y = resolution[1] // 2
         if keys[pygame.K_a]:
             self.player_x -= self.speed
         if keys[pygame.K_d]:
             self.player_x += self.speed
+        if keys[pygame.K_SPACE]:
+            self.player_y -= self.speed
 
 def main():
     pygame.init()
@@ -52,7 +56,7 @@ def main():
         green = pygame.Color(82, 179, 143)
         screen.fill(green)
 
-        player.player_movement()
+        player.player_movement(resolution)
         screen.blit(player.character, (player.player_x, player.player_y))
 
         pygame.display.flip()
