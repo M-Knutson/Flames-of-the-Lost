@@ -16,7 +16,8 @@ class Player():
         return character
 
     def update(self):
-        pass
+        # gravity
+        self.player_y += 10
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
@@ -29,8 +30,8 @@ class Player():
             self.player_x -= self.speed
         if keys[pygame.K_d]:
             self.player_x += self.speed
-        if keys[pygame.K_SPACE]:
-            self.player_y -= self.speed
+        if keys[pygame.K_SPACE] or keys[pygame.K_w]:
+            self.player_y -= (self.speed + 15)
 
 def main():
     pygame.init()
@@ -57,6 +58,7 @@ def main():
         screen.fill(green)
 
         player.player_movement(resolution)
+        player.update()
         screen.blit(player.character, (player.player_x, player.player_y))
 
         pygame.display.flip()
