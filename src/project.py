@@ -3,17 +3,22 @@ import pygame
 
 class Player():
 
-    def __init__(self, character, resolution, size = (50, 50), speed = 5):
-        self.character = character
+    def __init__(self, resolution, size = (50, 50), speed = 5):
         self.player_x = resolution[0] // 2
         self.player_y = resolution[1] // 2
         self.size = size
         self.speed = speed
-        
+        self.character = self.create_character()
+
+    def create_character(self):
+        character = pygame.Surface(self.size)
+        character.fill((219, 129, 96))
+        return character
+
     def update(self):
         pass
 
-    def player_pos(self) -> tuple:
+    def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
 
     def player_movement(self):
@@ -32,12 +37,7 @@ def main():
     resolution = (monitor_width - 50, monitor_height - 50)
     screen = pygame.display.set_mode(resolution)
 
-    #player_x = monitor_width // 2
-    #player_y = monitor_height // 2
-    player_size = 50
-    character = pygame.Surface((player_size, player_size))
-    character.fill((219, 129, 96))
-    player = Player(character, resolution, size=player_size)
+    player = Player(resolution)
 
     running = True
     while running:
