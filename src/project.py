@@ -25,6 +25,8 @@ class Player():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.player_x -= self.speed
+        if keys[pygame.K_d]:
+            self.player_x += self.speed
 
 def main():
     pygame.init()
