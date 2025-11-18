@@ -9,15 +9,19 @@ class Player():
         self.size = size
         self.speed = speed
         self.character = self.create_character()
+        self.rect = self.character.get_rect()
 
     def create_character(self):
         character = pygame.Surface(self.size)
         character.fill((219, 129, 96))
         return character
 
-    def update(self):
+    def update(self, screen):
         # gravity
         self.player_y += 10
+        screen.blit(self.character, (self.player_x, self.player_y))
+        self.rect.topleft = (self.player_pos())
+        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
@@ -32,6 +36,16 @@ class Player():
             self.player_x += self.speed
         if keys[pygame.K_SPACE] or keys[pygame.K_w]:
             self.player_y -= (self.speed + 15)
+
+class Platform():
+
+    def __init__(self, size = (), pos = ()):
+        self.size = size
+        self.pos = pos
+        self.platform = self.create_platform()
+
+    def create_platform():
+        platform = pygame.surface
 
 def main():
     pygame.init()
@@ -58,8 +72,7 @@ def main():
         screen.fill(green)
 
         player.player_movement(resolution)
-        player.update()
-        screen.blit(player.character, (player.player_x, player.player_y))
+        player.update(screen)
 
         pygame.display.flip()
         clock.tick(60)
