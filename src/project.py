@@ -19,6 +19,7 @@ class Player():
     def update(self, screen):
         # gravity
         self.player_y += 10
+        # draw character & bounding box
         screen.blit(self.character, (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
         pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
@@ -40,12 +41,29 @@ class Player():
 class Platform():
 
     def __init__(self, size = (), pos = ()):
+        self.tile_list = []
         self.size = size
         self.pos = pos
         self.platform = self.create_platform()
+        self.rect = self.platform.get_rect()
 
-    def create_platform():
-        platform = pygame.surface
+    def update(self, screen):
+        screen.blit(self.platform, self.pos)
+        self.rect.topleft = (self.pos)
+        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+
+    def create_platform(self):
+        platform = pygame.Surface(self.size)
+        platform.fill((38, 110, 80))
+        self.tile_list.append(platform)
+        return platform
+
+def generate_level_1(screen, resolution):
+        green = pygame.Color(82, 179, 143)
+        screen.fill(green)
+        platform_1 = Platform(size = (100, 50), 
+                              pos = ((resolution[0] // 2), (resolution[1] // 2) + 60))
+        platform_1.update(screen)
 
 def main():
     pygame.init()
@@ -68,8 +86,7 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
 
-        green = pygame.Color(82, 179, 143)
-        screen.fill(green)
+        generate_level_1(screen, resolution)
 
         player.player_movement(resolution)
         player.update(screen)
