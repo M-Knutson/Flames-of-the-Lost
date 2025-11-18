@@ -41,7 +41,7 @@ class Player():
 class Platform():
 
     def __init__(self, size = (), pos = ()):
-        self.tile_list = []
+        #self.tile_list = []
         self.size = size
         self.pos = pos
         self.platform = self.create_platform()
@@ -55,15 +55,20 @@ class Platform():
     def create_platform(self):
         platform = pygame.Surface(self.size)
         platform.fill((38, 110, 80))
-        self.tile_list.append(platform)
+        #self.tile_list.append(platform)
         return platform
 
 def generate_level_1(screen, resolution):
+        #create background
         green = pygame.Color(82, 179, 143)
         screen.fill(green)
+        #create platforms
+        platforms = []
         platform_1 = Platform(size = (100, 50), 
                               pos = ((resolution[0] // 2), (resolution[1] // 2) + 60))
-        platform_1.update(screen)
+        platforms.append(platform_1)
+        for platform in platforms:
+            platform.update(screen)
 
 def main():
     pygame.init()
@@ -73,7 +78,7 @@ def main():
     os.environ['SDL_VIDEOCENTERED'] = '1'
     info = pygame.display.Info()
     monitor_width, monitor_height = info.current_w, info.current_h
-    resolution = (monitor_width - 50, monitor_height - 50)
+    resolution = (monitor_width, monitor_height - 30)
     screen = pygame.display.set_mode(resolution)
 
     player = Player(resolution)
