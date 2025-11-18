@@ -17,12 +17,15 @@ class Player():
         return character
 
     def update(self, screen):
-        # gravity
-        self.player_y += 10
         # draw character & bounding box
         screen.blit(self.character, (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
         pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+
+        # gravity
+        self.player_y += 10
+
+        #check for collision
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
@@ -58,16 +61,19 @@ class Platform():
         #self.tile_list.append(platform)
         return platform
 
-def generate_level_1(screen, resolution):
+class World():
+    def __init__(self):
+        self.platforms_list = []
+
+    def generate_level_1(self, screen, resolution):
         #create background
         green = pygame.Color(82, 179, 143)
         screen.fill(green)
         #create platforms
-        platforms = []
         platform_1 = Platform(size = (100, 50), 
-                              pos = ((resolution[0] // 2), (resolution[1] // 2) + 60))
-        platforms.append(platform_1)
-        for platform in platforms:
+                              pos = ((resolution[0] // 2), (resolution[1] // 2) + 50))
+        self.platforms_list.append(platform_1)
+        for platform in self.platforms_list:
             platform.update(screen)
 
 def main():
@@ -82,6 +88,7 @@ def main():
     screen = pygame.display.set_mode(resolution)
 
     player = Player(resolution)
+    world = World()
 
     running = True
     while running:
@@ -91,7 +98,7 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
 
-        generate_level_1(screen, resolution)
+        world.generate_level_1(screen, resolution)
 
         player.player_movement(resolution)
         player.update(screen)
