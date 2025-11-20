@@ -6,40 +6,67 @@ class Player():
     def __init__(self, resolution, size = (50, 50), speed = 5):
         self.player_x = resolution[0] // 2
         self.player_y = resolution[1] // 2
+        self.dx = self.player_x
+        self.dy = self.player_y
+        self.gravity = 0
         self.size = size
         self.speed = speed
         self.character = self.create_character()
         self.rect = self.character.get_rect()
+        self.jumped = False
 
     def create_character(self):
         character = pygame.Surface(self.size)
         character.fill((219, 129, 96))
         return character
 
-    def update(self, screen):
+    def update(self, screen, world, resolution):
         # draw character & bounding box
         screen.blit(self.character, (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
         pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
-        # gravity
-        self.player_y += 10
+        self.get_player_movement(resolution)
 
         #check for collision
+        #for platform in world.platform_list:
+            #if platform[1].colliderect(self.rect):
+                #if self.player_y >=
+
+        if self.dy > resolution[1] // 2:
+            self.dy = resolution[1] // 2
+            if self.jumped == True:
+                self.jumped = False
+        self.player_x = self.dx
+        self.player_y = self.dy
+
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
 
-    def player_movement(self, resolution):
+
+    def get_player_movement(self, resolution):
         keys = pygame.key.get_pressed()
-        if self.player_y > resolution[1] // 2:
-            self.player_y = resolution[1] // 2
         if keys[pygame.K_a]:
-            self.player_x -= self.speed
+            self.dx -= self.speed
         if keys[pygame.K_d]:
-            self.player_x += self.speed
-        if keys[pygame.K_SPACE] or keys[pygame.K_w]:
-            self.player_y -= (self.speed + 15)
+            self.dx += self.speed
+        # jumping & gravity
+        if (keys[pygame.K_SPACE] or keys[pygame.K_w]) and self.jumped == False:
+            if self.gravity > 0:
+                self.gravity = -5
+            self.gravity -= 1
+            if self.gravity < -13:
+                self.jumped = True
+        if not (keys[pygame.K_SPACE] or keys[pygame.K_w]) and self.jumped == False:
+            if self.gravity < 0:
+                self.jumped = True
+        if self.jumped == True:
+            self.gravity += 1
+        if self.gravity > 10:
+            self.gravity = 10
+        self.dy += self.gravity
+
 
 class Platform():
 
@@ -72,9 +99,9 @@ class World():
         #create platforms
         platform_1 = Platform(size = (100, 50), 
                               pos = ((resolution[0] // 2), (resolution[1] // 2) + 50))
-        self.platforms_list.append(platform_1)
+        self.platforms_list.append([platform_1, platform_1.rect])
         for platform in self.platforms_list:
-            platform.update(screen)
+            platform[0].update(screen)
 
 def main():
     pygame.init()
@@ -84,7 +111,7 @@ def main():
     os.environ['SDL_VIDEOCENTERED'] = '1'
     info = pygame.display.Info()
     monitor_width, monitor_height = info.current_w, info.current_h
-    resolution = (monitor_width, monitor_height - 30)
+    resolution = (monitor_width, monitor_height)
     screen = pygame.display.set_mode(resolution)
 
     player = Player(resolution)
@@ -100,8 +127,7 @@ def main():
 
         world.generate_level_1(screen, resolution)
 
-        player.player_movement(resolution)
-        player.update(screen)
+        player.update(screen, world, resolution)
 
         pygame.display.flip()
         clock.tick(60)
