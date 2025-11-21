@@ -6,8 +6,8 @@ class Player():
     def __init__(self, resolution, size = (50, 50), speed = 5):
         self.player_x = resolution[0] // 2
         self.player_y = resolution[1] // 2
-        self.dx = self.player_x
-        self.dy = self.player_y
+        self.dx = 0
+        self.dy = 0
         self.width = size[0]
         self.height = size[1]
         self.gravity = 0
@@ -40,13 +40,16 @@ class Player():
                 # check for falling collision
                 if self.gravity > 0:
                     self.dy = platform[1].top - self.rect.bottom
+                if self.jumped == True:
+                    self.jumped = False
+            
+        self.player_x += self.dx
+        self.player_y += self.dy
 
-        if self.dy > resolution[1] // 2:
-            self.dy = resolution[1] // 2
+        if self.player_y > resolution[1] // 2:
+            self.player_y = resolution[1] // 2
             if self.jumped == True:
-                self.jumped = False
-        self.player_x = self.dx
-        self.player_y = self.dy
+                    self.jumped = False
 
 
     def player_pos(self) -> tuple[int, int]:
@@ -56,9 +59,11 @@ class Player():
     def get_player_movement(self, resolution):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.dx -= self.speed
-        if keys[pygame.K_d]:
-            self.dx += self.speed
+            self.dx = -self.speed
+        elif keys[pygame.K_d]:
+            self.dx = self.speed
+        else:
+            self.dx = 0
         # jumping & gravity
         if (keys[pygame.K_SPACE] or keys[pygame.K_w]) and self.jumped == False:
             if self.gravity > 0:
@@ -73,13 +78,12 @@ class Player():
             self.gravity += 1
         if self.gravity > 10:
             self.gravity = 10
-        self.dy += self.gravity
+        self.dy = self.gravity
 
 
 class Platform():
 
     def __init__(self, size = (), pos = ()):
-        #self.tile_list = []
         self.size = size
         self.pos = pos
         self.platform = self.create_platform()
@@ -93,7 +97,6 @@ class Platform():
     def create_platform(self):
         platform = pygame.Surface(self.size)
         platform.fill((38, 110, 80))
-        #self.tile_list.append(platform)
         return platform
 
 class World():
