@@ -3,7 +3,7 @@ import pygame
 
 class Player():
 
-    def __init__(self, resolution, size = (50, 50), speed = 5):
+    def __init__(self, resolution, size = (40, 40), speed = 5):
         self.player_x = resolution[0] // 2
         self.player_y = resolution[1] // 2
         self.dx = 0
@@ -28,26 +28,8 @@ class Player():
         self.rect.topleft = (self.player_pos())
         pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
-        self.get_player_movement(resolution)
-
-        #check for collision
-        for platform in world.platforms_list:
-            # check for y collision
-            if platform[1].colliderect(self.rect.x, self.rect.y + self.dy, 
-                                       self.width, self.height):
-                # check for jumping collision
-                if self.gravity < 0:
-                    self.dy = platform[1].bottom - self.rect.top
-                    self.gravity = 0
-                # check for falling collision
-                elif self.gravity > 0:
-                    self.dy = platform[1].top - self.rect.bottom
-                if self.jumped == True:
-                    self.jumped = False
-            # check for x collision
-            if platform[1].colliderect(self.rect.x + self.dx, self.rect.y, 
-                                       self.width, self.height):
-                self.dx = 0
+        self.get_player_movement()
+        self.detect_collision(world)
             
         self.player_x += self.dx
         self.player_y += self.dy
@@ -62,7 +44,7 @@ class Player():
         return (self.player_x, self.player_y)
 
 
-    def get_player_movement(self, resolution):
+    def get_player_movement(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.dx = -self.speed
@@ -81,10 +63,35 @@ class Player():
             if self.gravity < 0:
                 self.jumped = True
         if self.jumped == True:
-            self.gravity += 1
+            self.activate_gravity()
+        self.dy = self.gravity
+
+
+    def activate_gravity(self):
+        self.gravity += 1
         if self.gravity > 10:
             self.gravity = 10
-        self.dy = self.gravity
+
+    def detect_collision(self, world):
+        #check for collision
+        for platform in world.platforms_list:
+            # check for y collision
+            if platform[1].colliderect(self.rect.x, self.rect.y + self.dy, 
+                                       self.width, self.height):
+                # check for jumping collision
+                if self.gravity < 0:
+                    self.jumped = True
+                    self.dy = platform[1].bottom - self.rect.top
+                    self.gravity = 0
+                    self.activate_gravity()
+                # check for falling collision
+                elif self.gravity > 0:
+                    self.dy = platform[1].top - self.rect.bottom
+                    self.jumped = False
+            # check for x collision
+            if platform[1].colliderect(self.rect.x + self.dx, self.rect.y, 
+                                       self.width, self.height):
+                self.dx = 0
 
 
 class Platform():
@@ -108,15 +115,18 @@ class Platform():
 class World():
     def __init__(self):
         self.platforms_list = []
+        self.platform_params = [{"size": (100, 50), "pos": (618, 432)},
+                                {"size": (50, 25), "pos": (750, 300)}]
 
     def generate_level_1(self, screen, resolution):
         #create background
         green = pygame.Color(82, 179, 143)
         screen.fill(green)
         #create platforms
-        platform_1 = Platform(size = (100, 50), 
-                              pos = ((resolution[0] // 2) - 150, (resolution[1] // 2)))
-        self.platforms_list.append([platform_1, platform_1.rect])
+        for param_pair in self.platform_params:
+            platform = Platform(size = param_pair["size"], pos = param_pair["pos"])
+            self.platforms_list.append([platform, platform.rect])
+             
         for platform in self.platforms_list:
             platform[0].update(screen)
 
