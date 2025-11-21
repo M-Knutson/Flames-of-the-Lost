@@ -32,16 +32,22 @@ class Player():
 
         #check for collision
         for platform in world.platforms_list:
+            # check for y collision
             if platform[1].colliderect(self.rect.x, self.rect.y + self.dy, 
                                        self.width, self.height):
                 # check for jumping collision
                 if self.gravity < 0:
                     self.dy = platform[1].bottom - self.rect.top
+                    self.gravity = 0
                 # check for falling collision
-                if self.gravity > 0:
+                elif self.gravity > 0:
                     self.dy = platform[1].top - self.rect.bottom
                 if self.jumped == True:
                     self.jumped = False
+            # check for x collision
+            if platform[1].colliderect(self.rect.x + self.dx, self.rect.y, 
+                                       self.width, self.height):
+                self.dx = 0
             
         self.player_x += self.dx
         self.player_y += self.dy
