@@ -8,6 +8,8 @@ class Player():
         self.player_y = resolution[1] // 2
         self.dx = self.player_x
         self.dy = self.player_y
+        self.width = size[0]
+        self.height = size[1]
         self.gravity = 0
         self.size = size
         self.speed = speed
@@ -29,9 +31,15 @@ class Player():
         self.get_player_movement(resolution)
 
         #check for collision
-        #for platform in world.platform_list:
-            #if platform[1].colliderect(self.rect):
-                #if self.player_y >=
+        for platform in world.platforms_list:
+            if platform[1].colliderect(self.rect.x, self.rect.y + self.dy, 
+                                       self.width, self.height):
+                # check for jumping collision
+                if self.gravity < 0:
+                    self.dy = platform[1].bottom - self.rect.top
+                # check for falling collision
+                if self.gravity > 0:
+                    self.dy = platform[1].top - self.rect.bottom
 
         if self.dy > resolution[1] // 2:
             self.dy = resolution[1] // 2
@@ -98,7 +106,7 @@ class World():
         screen.fill(green)
         #create platforms
         platform_1 = Platform(size = (100, 50), 
-                              pos = ((resolution[0] // 2), (resolution[1] // 2) + 50))
+                              pos = ((resolution[0] // 2) - 150, (resolution[1] // 2)))
         self.platforms_list.append([platform_1, platform_1.rect])
         for platform in self.platforms_list:
             platform[0].update(screen)
