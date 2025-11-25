@@ -4,6 +4,7 @@ import pygame
 class Player():
 
     def __init__(self, resolution, size = (40, 40), speed = 5):
+        self.screen_res = resolution
         self.player_x = resolution[0] // 2
         self.player_y = resolution[1] // 2
         self.dx = 0
@@ -16,6 +17,7 @@ class Player():
         self.character = self.create_character()
         self.rect = self.character.get_rect()
         self.jumped = False
+        self.dead = False
 
     def create_character(self):
         character = pygame.Surface(self.size)
@@ -34,10 +36,14 @@ class Player():
         self.player_x += self.dx
         self.player_y += self.dy
 
-        if self.player_y > resolution[1] // 2:
-            self.player_y = resolution[1] // 2
+        if self.player_y > resolution[1] + 50:
+            self.player_y = resolution[1] + 50
             if self.jumped == True:
                     self.jumped = False
+
+        self.player_is_offscreen()
+        if self.dead == True:
+            print("You died.")
 
 
     def player_pos(self) -> tuple[int, int]:
@@ -93,6 +99,12 @@ class Player():
                                        self.width, self.height):
                 self.dx = 0
 
+    def player_is_offscreen(self):
+        if self.player_y > self.screen_res[1] + 10:
+            self.dead = True
+        else:
+            pass
+
 
 class Platform():
 
@@ -134,6 +146,7 @@ def main():
     pygame.init()
     pygame.display.set_caption("Flames of the Lost")
     clock = pygame.time.Clock()
+    game_active = True
 
     os.environ['SDL_VIDEOCENTERED'] = '1'
     info = pygame.display.Info()
@@ -152,9 +165,10 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
 
-        world.generate_level_1(screen, resolution)
+        if game_active == True:
+            world.generate_level_1(screen, resolution)
 
-        player.update(screen, world, resolution)
+            player.update(screen, world, resolution)
 
         pygame.display.flip()
         clock.tick(60)
