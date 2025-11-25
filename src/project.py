@@ -142,6 +142,10 @@ class World():
         for platform in self.platforms_list:
             platform[0].update(screen)
 
+def draw_text(screen, text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
+
 def main():
     pygame.init()
     pygame.display.set_caption("Flames of the Lost")
@@ -153,6 +157,8 @@ def main():
     monitor_width, monitor_height = info.current_w, info.current_h
     resolution = (monitor_width, monitor_height)
     screen = pygame.display.set_mode(resolution)
+    text_font_large = pygame.font.SysFont("Arial", 75)
+    text_font_small = pygame.font.SysFont("Arial", 30)
 
     player = Player(resolution)
     world = World()
@@ -164,11 +170,24 @@ def main():
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
+                
+            if game_active == False and (event.type == pygame.KEYDOWN 
+                                         and event.key == pygame.K_r):
+                player = Player(resolution)
+                world = World()
+                game_active = True
 
         if game_active == True:
             world.generate_level_1(screen, resolution)
-
             player.update(screen, world, resolution)
+            if player.dead == True:
+                game_active = False
+
+        else:
+            screen.fill((0, 0, 0))
+            draw_text(screen, "You Died" , text_font_large, (170, 20, 10), 675, 350)
+            draw_text(screen, "Press 'R' to restart," , text_font_small, (170, 20, 10), 700, 440)
+            draw_text(screen, "or 'Esc' to quit" , text_font_small, (170, 20, 10), 725, 475)
 
         pygame.display.flip()
         clock.tick(60)
