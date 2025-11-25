@@ -184,7 +184,10 @@ def main():
                 game_active = False
 
         else:
-            screen.fill((0, 0, 0))
+            transparent_surf = pygame.Surface(resolution)
+            transparent_surf.fill((0, 0, 0))
+            transparent_surf.set_alpha((10))
+            screen.blit(transparent_surf, (0, 0))
             draw_text(screen, "You Died" , text_font_large, (170, 20, 10), 675, 350)
             draw_text(screen, "Press 'R' to restart," , text_font_small, (170, 20, 10), 700, 440)
             draw_text(screen, "or 'Esc' to quit" , text_font_small, (170, 20, 10), 725, 475)
