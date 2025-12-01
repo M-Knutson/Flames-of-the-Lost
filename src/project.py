@@ -112,33 +112,52 @@ class Platform():
         self.size = size
         self.pos = pos
         self.platform = self.create_platform()
-        self.rect = self.platform.get_rect()
+        self.rect = self.create_bounding_box()
+
 
     def update(self, screen):
         screen.blit(self.platform, self.pos)
-        self.rect.topleft = (self.pos)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        #self.rect.topleft = (self.pos)
+        pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
+
 
     def create_platform(self):
-        platform = pygame.Surface(self.size)
-        platform.fill((38, 110, 80))
+        #platform = pygame.Surface(self.size)
+        #platform.fill((38, 110, 80))
+        if self.size == (152, 75):
+            platform = pygame.image.load('art/fotl_platform_large.png').convert_alpha()
+        if self.size == (110, 50):
+            platform = pygame.image.load('art/fotl_platform_medium.png').convert_alpha()
+        if self.size == (50, 25):
+            platform = pygame.image.load('art/fotl_platform_small.png').convert_alpha()
         return platform
+    
+
+    def create_bounding_box(self):
+        height_adjustment = self.size[1] - 2
+        if self.size == (152, 75):
+            height_adjustment = self.size[1] - 22
+        bounding_box = pygame.Rect(self.pos[0], self.pos[1] + 2, self.size[0], height_adjustment)
+        return bounding_box
+
 
 class World():
     def __init__(self):
         self.platforms_list = []
-        self.platform_params = [{"size": (100, 50), "pos": (618, 432)},
-                                {"size": (50, 25), "pos": (750, 300)}]
+        self.platform_params = [{"size": (110, 50), "pos": (618, 432)},
+                                {"size": (50, 25), "pos": (750, 300)},
+                                {"size": (152, 75), "pos": (300, 300)}]
 
     def generate_level_1(self, screen, resolution):
-        #create background
-        green = pygame.Color(82, 179, 143)
-        screen.fill(green)
         #create platforms
         for param_pair in self.platform_params:
             platform = Platform(size = param_pair["size"], pos = param_pair["pos"])
             self.platforms_list.append([platform, platform.rect])
-             
+
+    def draw_world(self, screen):
+        #create background
+        green = pygame.Color(82, 179, 143)
+        screen.fill(green)
         for platform in self.platforms_list:
             platform[0].update(screen)
 
@@ -162,6 +181,7 @@ def main():
 
     player = Player(resolution)
     world = World()
+    world.generate_level_1(screen, resolution)
 
     running = True
     while running:
@@ -175,10 +195,11 @@ def main():
                                          and event.key == pygame.K_r):
                 player = Player(resolution)
                 world = World()
+                world.generate_level_1(screen, resolution)
                 game_active = True
 
         if game_active == True:
-            world.generate_level_1(screen, resolution)
+            world.draw_world(screen)
             player.update(screen, world, resolution)
             if player.dead == True:
                 game_active = False
