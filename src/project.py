@@ -14,21 +14,25 @@ class Player():
         self.gravity = 0
         self.size = size
         self.speed = speed
-        self.character = self.create_character()
-        self.rect = self.character.get_rect()
+        self.player_index = 0
+        self.character_list = self.create_character()
+        self.rect = self.character_list[0].get_rect()
         self.jumped = False
         self.dead = False
 
     def create_character(self):
-        character = pygame.Surface(self.size)
-        character.fill((219, 129, 96))
-        return character
+        character_list = []
+        for img in range(1, 9):
+            character =  pygame.image.load(f"art/character/Calci_Sprite-{img}.png")
+            character_list.append(character)
+        return character_list
 
     def update(self, screen, world, resolution):
         # draw character & bounding box
-        screen.blit(self.character, (self.player_x, self.player_y))
+        self.animate_player()
+        screen.blit(self.character_list[int(self.player_index)], (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         self.get_player_movement()
         self.detect_collision(world)
@@ -42,9 +46,11 @@ class Player():
                     self.jumped = False
 
         self.player_is_offscreen()
-        if self.dead == True:
-            print("You died.")
 
+    def animate_player(self):
+        self.player_index += 0.1
+        if self.player_index >= len(self.character_list):
+            self.player_index = 0
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
@@ -117,13 +123,10 @@ class Platform():
 
     def update(self, screen):
         screen.blit(self.platform, self.pos)
-        #self.rect.topleft = (self.pos)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
+        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
 
 
     def create_platform(self):
-        #platform = pygame.Surface(self.size)
-        #platform.fill((38, 110, 80))
         if self.size == (152, 75):
             platform = pygame.image.load('art/fotl_platform_large.png').convert_alpha()
         if self.size == (110, 50):
