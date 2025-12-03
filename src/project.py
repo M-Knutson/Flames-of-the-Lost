@@ -159,8 +159,10 @@ class World():
 
     def draw_world(self, screen):
         #create background
-        green = pygame.Color(82, 179, 143)
-        screen.fill(green)
+        #green = pygame.Color(82, 179, 143)
+        #screen.fill(green)
+        background = pygame.image.load('art/fotl_background.png').convert_alpha()
+        screen.blit(background, (0,0))
         for platform in self.platforms_list:
             platform[0].update(screen)
 
