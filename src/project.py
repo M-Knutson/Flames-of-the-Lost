@@ -147,11 +147,22 @@ class Platform():
 class World():
     def __init__(self):
         self.platforms_list = []
-        self.platform_params = [{"size": (110, 50), "pos": (618, 432)},
-                                {"size": (50, 25), "pos": (750, 300)},
-                                {"size": (152, 75), "pos": (300, 300)}]
+        self.platform_params = [{"size": (110, 50), "pos": (175, 500)},
+                                {"size": (50, 25), "pos": (300, 600)},
+                                {"size": (50, 25), "pos": (200, 400)},
+                                {"size": (110, 50), "pos": (350, 650)},
+                                {"size": (110, 50), "pos": (460, 650)},
+                                {"size": (152, 75), "pos": (650, 550)},
+                                {"size": (50, 25), "pos": (935, 705)},
+                                {"size": (50, 25), "pos": (1000, 480)},
+                                {"size": (50, 25), "pos": (1150, 480)},
+                                {"size": (50, 25), "pos": (1245, 400)},
+                                {"size": (110, 50), "pos": (1050, 310)},
+                                {"size": (50, 25), "pos": (930, 260)},
+                                {"size": (152, 75), "pos": (590, 300)},
+                                {"size": (152, 75), "pos": (495, 300)}]
 
-    def generate_level_1(self, screen, resolution):
+    def generate_level_1(self):
         #create platforms
         for param_pair in self.platform_params:
             platform = Platform(size = param_pair["size"], pos = param_pair["pos"])
@@ -186,7 +197,7 @@ def main():
 
     player = Player(resolution)
     world = World()
-    world.generate_level_1(screen, resolution)
+    world.generate_level_1()
 
     running = True
     while running:
