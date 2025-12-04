@@ -5,8 +5,8 @@ class Player():
 
     def __init__(self, resolution, size = (40, 40), speed = 5):
         self.screen_res = resolution
-        self.player_x = resolution[0] // 2
-        self.player_y = resolution[1] // 2
+        self.player_x = 590
+        self.player_y = 250
         self.dx = 0
         self.dy = 0
         self.width = size[0]
@@ -19,6 +19,7 @@ class Player():
         self.rect = self.character_list[0].get_rect()
         self.jumped = False
         self.dead = False
+        self.win = False
 
     def create_character(self):
         character_list = []
@@ -110,7 +111,7 @@ class Player():
     def detect_checkpoint_collision(self, world):
         for point in world.checkpoint_list:
             if point[1].colliderect(self.rect):
-                print("You Win")
+                self.win = True
 
     def player_is_offscreen(self):
         if self.player_y > self.screen_res[1] + 10:
@@ -254,6 +255,18 @@ def main():
             player.update(screen, world, resolution)
             if player.dead == True:
                 game_active = False
+            if player.win == True:
+                game_active = False
+
+        elif game_active == False and player.win == True:
+            transparent_surf = pygame.Surface(resolution)
+            transparent_surf.fill((0, 0, 0))
+            transparent_surf.set_alpha(10)
+            screen.blit(transparent_surf, (0, 0))
+            draw_text(screen, "Thanks for playing this demo of:", text_font_small, (82, 179, 143), 625, 325)
+            draw_text(screen, "Flames of the Lost", text_font_large, (222, 178, 91), 550, 375)
+            draw_text(screen, "Press 'R' to restart," , text_font_small, (82, 179, 143), 700, 480)
+            draw_text(screen, "or 'Esc' to quit" , text_font_small, (82, 179, 143), 725, 515)
 
         else:
             transparent_surf = pygame.Surface(resolution)
