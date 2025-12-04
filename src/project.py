@@ -36,6 +36,7 @@ class Player():
 
         self.get_player_movement()
         self.detect_collision(world)
+        self.detect_checkpoint_collision(world)
             
         self.player_x += self.dx
         self.player_y += self.dy
@@ -105,6 +106,12 @@ class Player():
                                        self.width, self.height):
                 self.dx = 0
 
+        
+    def detect_checkpoint_collision(self, world):
+        for point in world.checkpoint_list:
+            if point[1].colliderect(self.rect):
+                print("You Win")
+
     def player_is_offscreen(self):
         if self.player_y > self.screen_res[1] + 10:
             self.dead = True
@@ -161,7 +168,7 @@ class Checkpoint():
     
     def update(self, screen):
         screen.blit(self.checkpoint, (self.pos))
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
+        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
 
 class World():
     def __init__(self):
