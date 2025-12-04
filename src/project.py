@@ -143,11 +143,34 @@ class Platform():
         bounding_box = pygame.Rect(self.pos[0], self.pos[1] + 2, self.size[0], height_adjustment)
         return bounding_box
 
+class Checkpoint():
+    def __init__(self,size = (), pos = ()):
+        self.pos = pos
+        self.size = size
+        self.checkpoint = self.create_checkpoint()
+        self.rect = self.create_bounding_box()
+
+    def create_checkpoint(self):
+        image = pygame.image.load('art/fotl_checkpoint.png').convert_alpha()
+        return image
+    
+    def create_bounding_box(self):
+        centered_x = self.pos[0] + 25
+        bounding_box = pygame.Rect(centered_x, self.pos[1], self.size[0], self.size[1])
+        return bounding_box
+    
+    def update(self, screen):
+        screen.blit(self.checkpoint, (self.pos))
+        pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
 
 class World():
     def __init__(self):
         self.platforms_list = []
-        self.platform_params = [{"size": (110, 50), "pos": (175, 500)},
+        self.checkpoint_list = []
+
+    def generate_level_1(self):
+        #create platforms
+        platform_params = [{"size": (110, 50), "pos": (175, 500)},
                                 {"size": (50, 25), "pos": (300, 600)},
                                 {"size": (50, 25), "pos": (200, 400)},
                                 {"size": (110, 50), "pos": (350, 650)},
@@ -161,12 +184,15 @@ class World():
                                 {"size": (50, 25), "pos": (930, 260)},
                                 {"size": (152, 75), "pos": (590, 300)},
                                 {"size": (152, 75), "pos": (495, 300)}]
-
-    def generate_level_1(self):
-        #create platforms
-        for param_pair in self.platform_params:
+        for param_pair in platform_params:
             platform = Platform(size = param_pair["size"], pos = param_pair["pos"])
             self.platforms_list.append([platform, platform.rect])
+
+        #crete checkpoint
+        checkpoint_params = [{"size": (15, 65), "pos": (515, 237)}]
+        for params in checkpoint_params:
+            checkpoint = Checkpoint(size = params["size"], pos = params["pos"])
+            self.checkpoint_list.append([checkpoint, checkpoint.rect])
 
     def draw_world(self, screen):
         #create background
@@ -176,6 +202,8 @@ class World():
         screen.blit(background, (0,0))
         for platform in self.platforms_list:
             platform[0].update(screen)
+        for checkpoint in self.checkpoint_list:
+            checkpoint[0].update(screen)
 
 def draw_text(screen, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -211,7 +239,7 @@ def main():
                                          and event.key == pygame.K_r):
                 player = Player(resolution)
                 world = World()
-                world.generate_level_1(screen, resolution)
+                world.generate_level_1()
                 game_active = True
 
         if game_active == True:
