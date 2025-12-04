@@ -29,11 +29,9 @@ class Player():
         return character_list
 
     def update(self, screen, world):
-        # draw character & bounding box
         self.animate_player()
         screen.blit(self.character_list[int(self.player_index)], (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
-        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         self.get_player_movement()
         self.detect_collision(world)
@@ -126,7 +124,6 @@ class Platform():
 
     def update(self, screen):
         screen.blit(self.platform, self.pos)
-        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
 
 
     def create_platform(self):
@@ -164,7 +161,6 @@ class Checkpoint():
     
     def update(self, screen):
         screen.blit(self.checkpoint, (self.pos))
-        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 1)
 
 class World():
     def __init__(self):
@@ -191,16 +187,13 @@ class World():
             platform = Platform(size = param_pair["size"], pos = param_pair["pos"])
             self.platforms_list.append([platform, platform.rect])
 
-        #crete checkpoint
+        #create checkpoint
         checkpoint_params = [{"size": (15, 65), "pos": (515, 237)}]
         for params in checkpoint_params:
             checkpoint = Checkpoint(size = params["size"], pos = params["pos"])
             self.checkpoint_list.append([checkpoint, checkpoint.rect])
 
     def draw_world(self, screen):
-        #create background
-        #green = pygame.Color(82, 179, 143)
-        #screen.fill(green)
         background = pygame.image.load('art/fotl_background.png').convert_alpha()
         screen.blit(background, (0,0))
         for platform in self.platforms_list:
@@ -224,6 +217,7 @@ def main():
     resolution = (monitor_width, monitor_height)
     screen = pygame.display.set_mode(resolution)
     text_font_large = pygame.font.SysFont("Arial", 75)
+    text_font_italics = pygame.font.SysFont("Arial", 75, italic=True)
     text_font_small = pygame.font.SysFont("Arial", 30)
 
     player = Player(resolution)
@@ -258,10 +252,11 @@ def main():
             transparent_surf.fill((0, 0, 0))
             transparent_surf.set_alpha(10)
             screen.blit(transparent_surf, (0, 0))
-            draw_text(screen, "Thanks for playing this demo of:", text_font_small, (82, 179, 143), 625, 325)
-            draw_text(screen, "Flames of the Lost", text_font_large, (222, 178, 91), 550, 375)
+            draw_text(screen, "Thanks for playing this demo of:", text_font_small, (82, 179, 143), 630, 325)
+            draw_text(screen, "Flames of the Lost", text_font_italics, (222, 178, 91), 550, 375)
             draw_text(screen, "Press 'R' to restart," , text_font_small, (82, 179, 143), 700, 480)
             draw_text(screen, "or 'Esc' to quit" , text_font_small, (82, 179, 143), 725, 515)
+            draw_text(screen, "created by: M. Knutson" , text_font_small, (82, 179, 143), 670, 575)
 
         else:
             transparent_surf = pygame.Surface(resolution)
