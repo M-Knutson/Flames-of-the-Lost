@@ -5,8 +5,8 @@ class Player():
 
     def __init__(self, resolution, size = (40, 40), speed = 5):
         self.screen_res = resolution
-        self.player_x = 590
-        self.player_y = 250
+        self.player_x = 400
+        self.player_y = 610
         self.dx = 0
         self.dy = 0
         self.width = size[0]
@@ -28,7 +28,7 @@ class Player():
             character_list.append(character)
         return character_list
 
-    def update(self, screen, world, resolution):
+    def update(self, screen, world):
         # draw character & bounding box
         self.animate_player()
         screen.blit(self.character_list[int(self.player_index)], (self.player_x, self.player_y))
@@ -42,12 +42,7 @@ class Player():
         self.player_x += self.dx
         self.player_y += self.dy
 
-        if self.player_y > resolution[1] + 50:
-            self.player_y = resolution[1] + 50
-            if self.jumped == True:
-                    self.jumped = False
-
-        self.player_is_offscreen()
+        self.is_player_offscreen()
 
     def animate_player(self):
         self.player_index += 0.1
@@ -113,7 +108,7 @@ class Player():
             if point[1].colliderect(self.rect):
                 self.win = True
 
-    def player_is_offscreen(self):
+    def is_player_offscreen(self):
         if self.player_y > self.screen_res[1] + 10:
             self.dead = True
         else:
@@ -252,7 +247,7 @@ def main():
 
         if game_active == True:
             world.draw_world(screen)
-            player.update(screen, world, resolution)
+            player.update(screen, world)
             if player.dead == True:
                 game_active = False
             if player.win == True:
