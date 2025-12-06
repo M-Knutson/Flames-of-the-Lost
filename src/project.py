@@ -1,4 +1,3 @@
-import os
 import pygame
 
 class Player():
@@ -11,47 +10,51 @@ class Player():
         self.dy = 0
         self.width = size[0]
         self.height = size[1]
-        self.gravity = 0
+        self.gravity = 10
         self.size = size
         self.speed = speed
         self.player_index = 0
-        self.character_list = self.create_character()
+        self.character_list = self._create_character()
         self.rect = self.character_list[0].get_rect()
         self.jumped = False
         self.dead = False
         self.win = False
 
-    def create_character(self):
+
+    def _create_character(self):
         character_list = []
         for img in range(1, 9):
             character =  pygame.image.load(f"art/character/Calci_Sprite-{img}.png")
             character_list.append(character)
         return character_list
 
+
     def update(self, screen, world):
-        self.animate_player()
+        self._animate_player()
         screen.blit(self.character_list[int(self.player_index)], (self.player_x, self.player_y))
         self.rect.topleft = (self.player_pos())
 
-        self.get_player_movement()
-        self.detect_collision(world)
-        self.detect_checkpoint_collision(world)
+        self._get_player_movement()
+        self._detect_collision(world)
+        self._detect_checkpoint_collision(world)
             
         self.player_x += self.dx
         self.player_y += self.dy
 
-        self.is_player_offscreen()
+        self._is_player_offscreen()
 
-    def animate_player(self):
+
+    def _animate_player(self):
         self.player_index += 0.1
         if self.player_index >= len(self.character_list):
             self.player_index = 0
+
 
     def player_pos(self) -> tuple[int, int]:
         return (self.player_x, self.player_y)
 
 
-    def get_player_movement(self):
+    def _get_player_movement(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.dx = -self.speed
@@ -70,16 +73,17 @@ class Player():
             if self.gravity < 0:
                 self.jumped = True
         if self.jumped == True:
-            self.activate_gravity()
+            self._activate_gravity()
         self.dy = self.gravity
 
 
-    def activate_gravity(self):
+    def _activate_gravity(self):
         self.gravity += 1
         if self.gravity > 10:
             self.gravity = 10
 
-    def detect_collision(self, world):
+
+    def _detect_collision(self, world):
         #check for collision
         for platform in world.platforms_list:
             # check for y collision
@@ -90,7 +94,7 @@ class Player():
                     self.jumped = True
                     self.dy = platform[1].bottom - self.rect.top
                     self.gravity = 0
-                    self.activate_gravity()
+                    self._activate_gravity()
                 # check for falling collision
                 elif self.gravity > 0:
                     self.dy = platform[1].top - self.rect.bottom
@@ -101,12 +105,13 @@ class Player():
                 self.dx = 0
 
         
-    def detect_checkpoint_collision(self, world):
+    def _detect_checkpoint_collision(self, world):
         for point in world.checkpoint_list:
             if point[1].colliderect(self.rect):
                 self.win = True
 
-    def is_player_offscreen(self):
+
+    def _is_player_offscreen(self):
         if self.player_y > self.screen_res[1] + 10:
             self.dead = True
         else:
@@ -118,15 +123,15 @@ class Platform():
     def __init__(self, size = (), pos = ()):
         self.size = size
         self.pos = pos
-        self.platform = self.create_platform()
-        self.rect = self.create_bounding_box()
+        self.platform = self._create_platform()
+        self.rect = self._create_bounding_box()
 
 
     def update(self, screen):
         screen.blit(self.platform, self.pos)
 
 
-    def create_platform(self):
+    def _create_platform(self):
         if self.size == (152, 75):
             platform = pygame.image.load('art/fotl_platform_large.png').convert_alpha()
         if self.size == (110, 50):
@@ -136,36 +141,42 @@ class Platform():
         return platform
     
 
-    def create_bounding_box(self):
+    def _create_bounding_box(self):
         height_adjustment = self.size[1] - 2
         if self.size == (152, 75):
             height_adjustment = self.size[1] - 22
         bounding_box = pygame.Rect(self.pos[0], self.pos[1] + 2, self.size[0], height_adjustment)
         return bounding_box
 
+
 class Checkpoint():
     def __init__(self,size = (), pos = ()):
         self.pos = pos
         self.size = size
-        self.checkpoint = self.create_checkpoint()
-        self.rect = self.create_bounding_box()
+        self.checkpoint = self._create_checkpoint()
+        self.rect = self._create_bounding_box()
 
-    def create_checkpoint(self):
+
+    def _create_checkpoint(self):
         image = pygame.image.load('art/fotl_checkpoint.png').convert_alpha()
         return image
     
-    def create_bounding_box(self):
+
+    def _create_bounding_box(self):
         centered_x = self.pos[0] + 25
         bounding_box = pygame.Rect(centered_x, self.pos[1], self.size[0], self.size[1])
         return bounding_box
     
+
     def update(self, screen):
         screen.blit(self.checkpoint, (self.pos))
+
 
 class World():
     def __init__(self):
         self.platforms_list = []
         self.checkpoint_list = []
+
 
     def generate_level_1(self):
         #create platforms
@@ -193,6 +204,7 @@ class World():
             checkpoint = Checkpoint(size = params["size"], pos = params["pos"])
             self.checkpoint_list.append([checkpoint, checkpoint.rect])
 
+
     def draw_world(self, screen):
         background = pygame.image.load('art/fotl_background.png').convert_alpha()
         screen.blit(background, (0,0))
@@ -201,9 +213,11 @@ class World():
         for checkpoint in self.checkpoint_list:
             checkpoint[0].update(screen)
 
+
 def draw_text(screen, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
+
 
 def main():
     pygame.init()
@@ -211,10 +225,6 @@ def main():
     clock = pygame.time.Clock()
     game_active = True
 
-    #os.environ['SDL_VIDEOCENTERED'] = '1'
-    #info = pygame.display.Info()
-    #monitor_width, monitor_height = info.current_w, info.current_h
-    #resolution = (monitor_width, monitor_height)
     resolution = (1536, 864)
     screen = pygame.display.set_mode(resolution)
     text_font_large = pygame.font.SysFont("Arial", 75)
@@ -270,8 +280,6 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
-
-
 
 
 if __name__ == "__main__":
