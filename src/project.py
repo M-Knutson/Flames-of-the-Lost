@@ -211,10 +211,11 @@ def main():
     clock = pygame.time.Clock()
     game_active = True
 
-    os.environ['SDL_VIDEOCENTERED'] = '1'
-    info = pygame.display.Info()
-    monitor_width, monitor_height = info.current_w, info.current_h
-    resolution = (monitor_width, monitor_height)
+    #os.environ['SDL_VIDEOCENTERED'] = '1'
+    #info = pygame.display.Info()
+    #monitor_width, monitor_height = info.current_w, info.current_h
+    #resolution = (monitor_width, monitor_height)
+    resolution = (1536, 864)
     screen = pygame.display.set_mode(resolution)
     text_font_large = pygame.font.SysFont("Arial", 75)
     text_font_italics = pygame.font.SysFont("Arial", 75, italic=True)
