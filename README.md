@@ -1,6 +1,6 @@
 # Flames of the Lost
 ## Demo
-Demo Video: <*URL of video*>
+Demo Video: <https://youtu.be/XHzEO_c2s84>
 ## GitHub Repository
 GitHub Repo: <https://github.com/M-Knutson/Flames-of-the-Lost>
 
