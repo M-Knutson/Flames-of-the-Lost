@@ -150,6 +150,7 @@ class Platform():
 
 
 class Checkpoint():
+
     def __init__(self,size = (), pos = ()):
         self.pos = pos
         self.size = size
@@ -173,6 +174,7 @@ class Checkpoint():
 
 
 class World():
+    
     def __init__(self):
         self.platforms_list = []
         self.checkpoint_list = []
